@@ -2,61 +2,63 @@ const express = require("express");
 const app = express();
 const ejs = require("ejs");
 const cookieParser = require("cookie-parser");
-const dataStore = require("./data-store");
+const Entry = require("./model/entry");
 
 let userID = 1;
 const port = 3000;
+
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/todolist', { useNewUrlParser: true }, () => {
+    console.log("Connected to db!");
+    app.listen(port, () => {
+        console.log(`Todo list app listening at http://localhost:${port}`)
+    });
+});
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 
 let renderHomePage = function (req, res) {
-    entries = dataStore.getEntries(req.cookies.todoID);
-
-    let data = ejs.renderFile("./view/home.html", { entries: entries });
-    data.then((data) => {
-        res.write(data);
-        res.end();
-    }).catch((error) => {
-        console.log("error in rendering home page: " + error);
+    Entry.find({userID: req.cookies.todoID}, (err, entries) => {
+        let data = ejs.renderFile("./view/home.html", { entries: entries });
+        data.then((data) => {
+            res.write(data);
+            res.end();
+        }).catch((error) => {
+            console.log("error in rendering home page: " + error);
+        });
     });
 };
 
 app.get("/", (req, res) => {
-    let entries = null;
-    
     if (req.cookies.todoID === undefined) {
         res.cookie("todoID", userID);
         userID++;
     }
     else {
         console.log("has cookie: " + req.cookies.todoID);
-        entries = dataStore.getEntries(req.cookies.todoID);
-
-        if (entries !== null) {
-            entries.forEach(element => {
-                console.log("entries: " + element);
-            });
-        }
-        else {
-            console.log("entries empty");
-        }
     }
 
     renderHomePage(req, res);
 });
 
-app.post("/todo", (req, res) => {
+app.post("/todo", async (req, res) => {
     console.log(req.body);
 
+    let userPlan = req.body["plan"];
     dataStore.addEntry(req.cookies.todoID, req.body["plan"]);
+    const entry = new Entry({userID: req.cookies.todoID, entry: userPlan});
 
-    renderHomePage(req, res);
+    try {
+        await entry.save();
+        renderHomePage(req, res);
+    }
+    catch (err) {
+        renderHomePage(req, res);
+    }
 });
 
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
-});
+
 
 
