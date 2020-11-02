@@ -34,10 +34,8 @@ let renderHomePage = function (req, res) {
 app.get("/", (req, res) => {
     if (req.cookies.todoID === undefined) {
         res.cookie("todoID", userID);
+        console.log("new user added with id " + userID);
         userID++;
-    }
-    else {
-        console.log("has cookie: " + req.cookies.todoID);
     }
 
     renderHomePage(req, res);
