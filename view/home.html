@@ -7,9 +7,20 @@
 </head>
 <body>
     <form action="/todo" method="POST">
-        <label for="plan">To do:</label>
-        <input type="text" id="plan" name="plan"><br><br>
-        <input type="submit" value="Submit">
+        <label for="plan">A plan: </label>
+        <input type="text" id="plan" name="plan">
+        <input type="submit" value="add to my todo list ">
     </form>
+
+    <%if (entries !== null) { %>
+        <table>
+            <% for(let entry of entries) { %>
+               <tr>
+                 <td><%= entry %></td>
+               </tr>
+            <% } %>
+        </table>
+    <% } %>
+
 </body>
 </html>
