@@ -6,9 +6,9 @@ const port = 3000;
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/todolist', { useNewUrlParser: true }, () => {
-    console.log("Connected to db!");
+    console.log("connected to db");
     app.listen(port, () => {
-        console.log(`Todo list app listening at http://localhost:${port}`)
+        console.log(`todo list app listening at http://localhost:${port}`)
     });
 });
 

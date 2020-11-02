@@ -28,7 +28,6 @@ module.exports = function(app) {
     });
     
     app.post("/todo", async (req, res) => {
-        console.log(req.body);
     
         let userPlan = req.body["plan"];
         const entry = new Entry({userID: req.cookies.todoID, entry: userPlan});
