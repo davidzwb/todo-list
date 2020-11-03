@@ -17,6 +17,7 @@
             <% for(let entry of entries) { %>
                <tr>
                  <td><%= entry.entry %></td>
+                 <td><a href="/remove/<%= entry.entry %>">remove</a></td>
                </tr>
             <% } %>
         </table>

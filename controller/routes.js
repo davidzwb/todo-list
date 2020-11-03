@@ -8,7 +8,7 @@ let renderHomePage = function (req, res) {
         let data = ejs.renderFile("./view/home.html", { entries: entries });
         data.then((data) => {
             res.write(data);
-            res.end();
+            res.end();e
         }).catch((error) => {
             console.log("error in rendering home page: " + error);
         });
@@ -39,5 +39,13 @@ module.exports = function(app) {
         catch (err) {
             renderHomePage(req, res);
         }
+    });
+
+    app.get("/remove/:entry", (req, res) => {
+        console.log("to remove entry: " + req.params.entry);
+        Entry.remove({entry:req.params.entry}, (err) => {
+            renderHomePage(req, res);
+        });
+        
     });
 };
